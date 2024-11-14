@@ -30,3 +30,11 @@ async def update_task(task_id: int, updated_task: Task, session: Session = Depen
     session.commit()
     session.refresh(task)
     return task
+
+@router.delete("/tasks/{task_id}", status_code=204)
+async def delete_task(task_id: int, session: Session = Depends(get_session)):
+    task = session.get(Task, task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    session.delete(task)
+    session.commit()
