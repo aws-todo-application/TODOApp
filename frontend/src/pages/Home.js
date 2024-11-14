@@ -3,15 +3,19 @@ import React, { useState, useEffect } from "react";
 import apiClient from "../api/apiClient";
 import CreateTaskForm from "../components/CreateTaskForm";
 
-const App = () => {
+const Home = ({ onLogout }) => {
     const [showForm, setShowForm] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [taskToEdit, setTaskToEdit] = useState(null);
 
+    const userSession = JSON.parse(localStorage.getItem("userSession"));
+
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const response = await apiClient.get("/tasks");
+                const response = await apiClient.get("/tasks", {
+                    params: { user_id: userSession.idToken.payload.sub }, // Use Cognito ID as user_id
+                });
                 setTasks(response.data);
             } catch (error) {
                 console.error("Failed to fetch tasks:", error);
@@ -67,6 +71,9 @@ const App = () => {
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-3xl font-bold mb-6">To-Do Tasks</h1>
+            <button onClick={onLogout} className="text-blue-500 underline">
+                    Logout
+            </button>
 
             {/* Tasks Container */}
             <div className="relative bg-gray-100 p-4 rounded-lg shadow-md min-h-[80vh] overflow-y-auto overflow-x-hidden">
@@ -129,4 +136,4 @@ const App = () => {
     );
 };
 
-export default App;
+export default Home;

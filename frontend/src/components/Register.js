@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { CognitoUserPool, CognitoUserAttribute, CognitoUser } from "amazon-cognito-identity-js";
 import { cognitoConfig } from "../cognitoConfig";
+import { useNavigate, Link } from "react-router-dom";
 
 const userPool = new CognitoUserPool({
     UserPoolId: cognitoConfig.UserPoolId,
@@ -13,6 +14,7 @@ const Register = () => {
     const [password, setPassword] = useState("");
     const [confirmationCode, setConfirmationCode] = useState("");
     const [isConfirming, setIsConfirming] = useState(false);
+    const navigate = useNavigate();
 
     const handleRegister = (e) => {
         e.preventDefault();
@@ -51,6 +53,7 @@ const Register = () => {
                 return;
             }
             alert("Account confirmed! You can now log in.");
+            navigate("/login");
         });
     };
 
@@ -58,6 +61,7 @@ const Register = () => {
         <div className="bg-gray-100 p-6 rounded-lg shadow-md max-w-md mx-auto">
             <h2 className="text-2xl font-bold mb-4">Register</h2>
             {!isConfirming ? (
+                <>
                 <form onSubmit={handleRegister} className="space-y-4">
                     <div>
                         <label className="block text-gray-700">Email</label>
@@ -86,6 +90,13 @@ const Register = () => {
                         Register
                     </button>
                 </form>
+                <p className="text-center mt-4">
+                    Already have an account?{" "}
+                    <Link to="/login" className="text-blue-500 underline">
+                        Login here
+                    </Link>
+                </p>
+                </>
             ) : (
                 <form onSubmit={handleConfirm} className="space-y-4">
                     <div>
