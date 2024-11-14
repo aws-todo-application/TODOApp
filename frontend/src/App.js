@@ -37,6 +37,17 @@ const App = () => {
         }
     };
 
+    const deleteTask = async (taskId) => {
+        if (window.confirm("Are you sure you want to delete this task?")) {
+            try {
+                await apiClient.delete(`/tasks/${taskId}`);
+                setTasks(tasks.filter((task) => task.id !== taskId));
+            } catch (error) {
+                console.error("Failed to delete task:", error);
+            }
+        }
+    };
+
     const handleEditClick = (task) => {
         setTaskToEdit(task);
         setShowForm(true);
@@ -47,7 +58,7 @@ const App = () => {
             <h1 className="text-3xl font-bold mb-6">To-Do Tasks</h1>
 
             {/* Tasks Container */}
-            <div className="relative bg-gray-100 p-4 rounded-lg shadow-md min-h-[80vh] overflow-y-auto overflow-x-hidden">
+            <div className="relative bg-gray-100 p-4 rounded-lg shadow-md min-h-[80vh] max-h-[80vh] overflow-y-auto overflow-x-hidden">
                 <div className="space-y-4">
                     {tasks.map((task) => (
                         <div key={task.id} className="bg-white p-4 rounded-lg shadow flex justify-between items-center">
@@ -56,12 +67,20 @@ const App = () => {
                                 <br/>
                                 <span className="text-gray-500">{task.description}</span>
                             </div>
-                            <button
-                                onClick={() => handleEditClick(task)}
-                                className="text-blue-500 hover:underline"
-                            >
-                                Edit
-                            </button>
+                            <div className="flex items-center space-x-2">
+                                <button
+                                    onClick={() => handleEditClick(task)}
+                                    className="text-blue-500 bg-gray-300 rounded px-2 py-1 hover:underline"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => deleteTask(task.id)}
+                                    className="text-red-500 bg-gray-300 rounded px-2 py-1 hover:underline"
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -72,7 +91,7 @@ const App = () => {
                         setShowForm(true);
                         setTaskToEdit(null); // Clear taskToEdit for new task
                     }}
-                    className="sticky top-[93%] left-[93%] bg-blue-500 text-white font-bold py-2 px-4 rounded-full shadow-md hover:bg-blue-600"
+                    className="sticky bottom-4 left-[93%] bg-blue-500 text-white font-bold py-2 px-4 rounded-full shadow-md hover:bg-blue-600"
                 >
                     +
                 </button>
