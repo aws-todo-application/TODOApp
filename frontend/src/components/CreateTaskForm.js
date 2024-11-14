@@ -6,6 +6,8 @@ const CreateTaskForm = ({ onAddTask, onEditTask, taskToEdit, onCancel }) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
 
+    const userSession = JSON.parse(localStorage.getItem("userSession"));
+
     useEffect(() => {
         if (taskToEdit) {
             setTitle(taskToEdit.title);
@@ -23,7 +25,8 @@ const CreateTaskForm = ({ onAddTask, onEditTask, taskToEdit, onCancel }) => {
                 onEditTask({ ...taskToEdit, title, description });
             } else {
                 try {
-                    const response = await apiClient.post("/tasks", { title, description });
+                    const user_id = userSession.idToken.payload.sub;
+                    const response = await apiClient.post("/tasks", { title, description, user_id });
                     onAddTask(response.data);
                 } catch (error) {
                     console.error("Failed to create task:", error);
