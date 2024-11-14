@@ -14,8 +14,8 @@ async def create_task(task: Task, session: Session = Depends(get_session)):
     return task
 
 @router.get("/tasks", response_model=list[Task])
-async def read_tasks(session: Session = Depends(get_session)):
-    tasks = session.exec(select(Task)).all()
+async def read_tasks(user_id: str, session: Session = Depends(get_session)):
+    tasks = session.exec(select(Task).where(Task.user_id == user_id)).all()
     return tasks
 
 @router.put("/tasks/{task_id}", response_model=Task)
