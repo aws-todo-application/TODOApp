@@ -48,6 +48,17 @@ const App = () => {
         }
     };
 
+    const toggleComplete = async (taskId) => {
+        try {
+            const response = await apiClient.patch(`/tasks/${taskId}/complete`);
+            setTasks(tasks.map((task) =>
+                task.id === taskId ? { ...task, completed: response.data.completed } : task
+            ));
+        } catch (error) {
+            console.error("Failed to toggle task completion:", error);
+        }
+    };
+
     const handleEditClick = (task) => {
         setTaskToEdit(task);
         setShowForm(true);
@@ -58,16 +69,22 @@ const App = () => {
             <h1 className="text-3xl font-bold mb-6">To-Do Tasks</h1>
 
             {/* Tasks Container */}
-            <div className="relative bg-gray-100 p-4 rounded-lg shadow-md min-h-[80vh] max-h-[80vh] overflow-y-auto overflow-x-hidden">
+            <div className="relative bg-gray-100 p-4 rounded-lg shadow-md min-h-[80vh] overflow-y-auto overflow-x-hidden">
                 <div className="space-y-4">
-                    {tasks.map((task) => (
-                        <div key={task.id} className="bg-white p-4 rounded-lg shadow flex justify-between items-center">
+                    {tasks.sort((a, b) => a.id - b.id).map((task) => (
+                        <div key={task.id} className={`bg-white p-4 rounded-lg shadow flex justify-between items-center ${task.completed ? "opacity-50" : ""}`}>
                             <div>
-                                <span className="font-semibold">{task.title}</span>
-                                <br/>
-                                <span className="text-gray-500">{task.description}</span>
+                                <span className={`font-semibold ${task.completed ? "line-through text-gray-500" : ""}`}>{task.title}</span>
+                                <br />
+                                <span className={`${task.completed ? "line-through text-gray-400" : "text-gray-500"}`}>{task.description}</span>
                             </div>
                             <div className="flex items-center space-x-2">
+                                <button
+                                    onClick={() => toggleComplete(task.id)}
+                                    className={`text-${task.completed ? "gray" : "green"}-500 hover:underline bg-gray-300 rounded px-2 py-1`}
+                                >
+                                    {task.completed ? "Unmark" : "Complete"}
+                                </button>
                                 <button
                                     onClick={() => handleEditClick(task)}
                                     className="text-blue-500 bg-gray-300 rounded px-2 py-1 hover:underline"
@@ -94,7 +111,6 @@ const App = () => {
                 >
                     +
                 </button>
-
             </div>
 
             {/* Conditional Render Form */}
