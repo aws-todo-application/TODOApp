@@ -3,6 +3,12 @@ import React, { useState, useEffect } from "react";
 import apiClient from "../api/apiClient";
 import CreateTaskForm from "../components/CreateTaskForm";
 
+// Images
+import redFlag from '../images/redFlag.png';
+import orangeFlag from '../images/orangeFlag.png';
+import blueFlag from '../images/blueFlag.png';
+import blankFlag from '../images/blankFlag.png';
+
 const Home = ({ onLogout }) => {
     const [showForm, setShowForm] = useState(false);
     const [tasks, setTasks] = useState([]);
@@ -24,6 +30,21 @@ const Home = ({ onLogout }) => {
 
         fetchTasks();
     }, []);
+
+    const getPriorityClass = (priority) => {
+        switch (priority) {
+            case "P1":
+                return redFlag;
+            case "P2":
+                return orangeFlag;
+            case "P3":
+                return blueFlag;
+            case "P4":
+                return blankFlag;
+            default:
+                return "";
+        }
+    };
 
     const addTask = (newTask) => {
         setTasks([...tasks, newTask]);
@@ -76,39 +97,40 @@ const Home = ({ onLogout }) => {
             </button>
 
             {/* Tasks Container */}
-            <div className="relative bg-gray-100 p-4 rounded-lg shadow-md min-h-[80vh] overflow-y-auto overflow-x-hidden">
-                <div className="space-y-4">
-                    {tasks.sort((a, b) => a.id - b.id).map((task) => (
-                        <div key={task.id} className={`bg-white p-4 rounded-lg shadow flex justify-between items-center ${task.completed ? "opacity-50" : ""}`}>
-                            <div>
-                                <span className={`font-semibold ${task.completed ? "line-through text-gray-500" : ""}`}>{task.title}</span>
-                                <br />
-                                <span className={`${task.completed ? "line-through text-gray-400" : "text-gray-500"}`}>{task.description}</span>
+                        <div className="relative bg-gray-100 p-4 rounded-lg shadow-md min-h-[80vh] overflow-y-auto overflow-x-hidden">
+                            <div className="space-y-4">
+                                {tasks.sort((a, b) => a.id - b.id).map((task) => (
+                                    <div key={task.id} className={`bg-white p-4 rounded-lg shadow flex justify-between items-center ${task.completed ? "opacity-50" : ""}`}>
+                                        <div>
+                                            <span className={`font-semibold ${task.completed ? "line-through text-gray-500" : ""}`}>{task.title}</span>
+                                            <img src={`${getPriorityClass(task.priority)}`} className="inline-block w-4 h-4 ml-2"/>
+                                            <br />
+                                            <span className={`${task.completed ? "line-through text-gray-400" : "text-gray-500"}`}>{task.description}</span>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <button
+                                                onClick={() => toggleComplete(task.id)}
+                                                className={`text-${task.completed ? "gray" : "green"}-500 hover:underline bg-gray-300 rounded px-2 py-1`}
+                                            >
+                                                {task.completed ? "Unmark" : "Complete"}
+                                            </button>
+                                            <button
+                                                onClick={() => handleEditClick(task)}
+                                                className="text-blue-500 bg-gray-300 rounded px-2 py-1 hover:underline"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => deleteTask(task.id)}
+                                                className="text-red-500 bg-gray-300 rounded px-2 py-1 hover:underline"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                            <div className="flex items-center space-x-2">
-                                <button
-                                    onClick={() => toggleComplete(task.id)}
-                                    className={`text-${task.completed ? "gray" : "green"}-500 hover:underline bg-gray-300 rounded px-2 py-1`}
-                                >
-                                    {task.completed ? "Unmark" : "Complete"}
-                                </button>
-                                <button
-                                    onClick={() => handleEditClick(task)}
-                                    className="text-blue-500 bg-gray-300 rounded px-2 py-1 hover:underline"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() => deleteTask(task.id)}
-                                    className="text-red-500 bg-gray-300 rounded px-2 py-1 hover:underline"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-                {/* Add Task Button */}
+                            {/* Add Task Button */}
                 <button
                     onClick={() => {
                         setShowForm(true);
