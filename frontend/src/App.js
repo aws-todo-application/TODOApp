@@ -6,6 +6,7 @@ import CreateTaskForm from "./components/CreateTaskForm";
 const App = () => {
     const [showForm, setShowForm] = useState(false);
     const [tasks, setTasks] = useState([]);
+    const [taskToEdit, setTaskToEdit] = useState(null);
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -25,6 +26,22 @@ const App = () => {
         setShowForm(false);
     };
 
+    const editTask = async (updatedTask) => {
+        try {
+            const response = await apiClient.put(`/tasks/${updatedTask.id}`, updatedTask);
+            setTasks(tasks.map((task) => (task.id === updatedTask.id ? response.data : task)));
+            setShowForm(false);
+            setTaskToEdit(null);
+        } catch (error) {
+            console.error("Failed to update task:", error);
+        }
+    };
+
+    const handleEditClick = (task) => {
+        setTaskToEdit(task);
+        setShowForm(true);
+    };
+
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-3xl font-bold mb-6">To-Do Tasks</h1>
@@ -39,14 +56,22 @@ const App = () => {
                                 <br/>
                                 <span className="text-gray-500">{task.description}</span>
                             </div>
-                            {/* Priority */}
+                            <button
+                                onClick={() => handleEditClick(task)}
+                                className="text-blue-500 hover:underline"
+                            >
+                                Edit
+                            </button>
                         </div>
                     ))}
                 </div>
 
                 {/* Add Task Button */}
                 <button
-                    onClick={() => setShowForm(true)}
+                    onClick={() => {
+                        setShowForm(true);
+                        setTaskToEdit(null); // Clear taskToEdit for new task
+                    }}
                     className="sticky top-[93%] left-[93%] bg-blue-500 text-white font-bold py-2 px-4 rounded-full shadow-md hover:bg-blue-600"
                 >
                     +
@@ -57,7 +82,12 @@ const App = () => {
             {showForm && (
                 <CreateTaskForm
                     onAddTask={addTask}
-                    onCancel={() => setShowForm(false)}
+                    onEditTask={editTask}
+                    taskToEdit={taskToEdit}
+                    onCancel={() => {
+                        setShowForm(false);
+                        setTaskToEdit(null);
+                    }}
                 />
             )}
         </div>

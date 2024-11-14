@@ -1,38 +1,49 @@
 // src/components/CreateTaskForm.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import apiClient from "../api/apiClient";
 
-const CreateTaskForm = ({ onAddTask, onCancel }) => {
+const CreateTaskForm = ({ onAddTask, onEditTask, taskToEdit, onCancel }) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
 
-    const handleAddTask = async (e) => {
+    useEffect(() => {
+        if (taskToEdit) {
+            setTitle(taskToEdit.title);
+            setDescription(taskToEdit.description);
+        } else {
+            setTitle("");
+            setDescription("");
+        }
+    }, [taskToEdit]);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            if(title) {
-                const response = await apiClient.post("/tasks", {
-                    title: title,
-                    description: description,
-                });
-                onAddTask(response.data);
-                setTitle("");
-                setDescription("");
+        if(title) {
+            if (taskToEdit) {
+                onEditTask({ ...taskToEdit, title, description });
+            } else {
+                try {
+                    const response = await apiClient.post("/tasks", { title, description });
+                    onAddTask(response.data);
+                } catch (error) {
+                    console.error("Failed to create task:", error);
+                }
             }
-            else {
-                alert("Task name is required!");
-            }
-        } catch (error) {
-            console.error("Failed to create task:", error);
+        }
+        else {
+            alert("Please enter a task name");
         }
     };
 
     return (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
             <form
-                onSubmit={handleAddTask}
+                onSubmit={handleSubmit}
                 className="bg-white p-6 rounded-lg shadow-lg w-80"
             >
-                <h2 className="text-xl font-semibold mb-4">Add New Task</h2>
+                <h2 className="text-xl font-semibold mb-4">
+                    {taskToEdit ? "Edit Task" : "Add New Task"}
+                </h2>
                 
                 <label className="block mb-2">
                     <span className="text-gray-700">Task Name</span>
@@ -65,7 +76,7 @@ const CreateTaskForm = ({ onAddTask, onCancel }) => {
                         type="submit"
                         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                     >
-                        Add
+                        {taskToEdit ? "Save Changes" : "Add"}
                     </button>
                 </div>
             </form>
