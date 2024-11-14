@@ -84,17 +84,17 @@ const App = () => {
                         </div>
                     ))}
                 </div>
-
                 {/* Add Task Button */}
                 <button
                     onClick={() => {
                         setShowForm(true);
                         setTaskToEdit(null); // Clear taskToEdit for new task
                     }}
-                    className="sticky bottom-4 left-[93%] bg-blue-500 text-white font-bold py-2 px-4 rounded-full shadow-md hover:bg-blue-600"
+                    className="sticky m-4 bottom-4 right-4 float-right bg-blue-500 text-white font-bold py-2 px-4 rounded-full shadow-md hover:bg-blue-600"
                 >
                     +
                 </button>
+
             </div>
 
             {/* Conditional Render Form */}
