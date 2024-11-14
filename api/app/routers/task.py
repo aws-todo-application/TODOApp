@@ -38,3 +38,14 @@ async def delete_task(task_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Task not found")
     session.delete(task)
     session.commit()
+
+@router.patch("/tasks/{task_id}/complete", response_model=Task)
+async def complete_task(task_id: int, session: Session = Depends(get_session)):
+    task = session.get(Task, task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    task.completed = not task.completed
+    session.add(task)
+    session.commit()
+    session.refresh(task)
+    return task
