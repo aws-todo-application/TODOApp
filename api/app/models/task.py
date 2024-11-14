@@ -7,3 +7,4 @@ class Task(SQLModel, table=True):
     description: Optional[str] = None
     completed: bool = Field(default=False)
     user_id: str
+    priority: Optional[str] = Field(default=None)
