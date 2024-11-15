@@ -27,6 +27,8 @@ async def update_task(task_id: int, updated_task: Task, session: Session = Depen
     task.title = updated_task.title
     task.description = updated_task.description
     task.priority = updated_task.priority
+    print(updated_task.deadline)
+    task.deadline = updated_task.deadline
     session.add(task)
     session.commit()
     session.refresh(task)
