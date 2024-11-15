@@ -15,12 +15,11 @@ const Home = ({ onLogout }) => {
     const [taskToEdit, setTaskToEdit] = useState(null);
     const [sortCriteria, setSortCriteria] = useState("id");
     const [sortDirection, setSortDirection] = useState("asc");
+    const [filterPriority, setFilterPriority] = useState("");
+    const [filterStatus, setFilterStatus] = useState("");
 
     const userSession = JSON.parse(localStorage.getItem("userSession"));
 
-    useEffect(() => {
-        console.log("Sort criteria changed to:", sortedTasks);
-    }, [sortCriteria]);
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -52,21 +51,32 @@ const Home = ({ onLogout }) => {
         }
     };
 
-    const sortedTasks = [...tasks].sort((a, b) => {
-        let comparison = 0;
-        if (sortCriteria === "priority") {
-            const priorityOrder = { "P1": 1, "P2": 2, "P3": 3, "P4": 4, "": 5 };
-            comparison = priorityOrder[a.priority] - priorityOrder[b.priority];
-        } else if (sortCriteria === "deadline") {
-            comparison = new Date(a.deadline || 0) - new Date(b.deadline || 0);
-        } else if (sortCriteria === "title") {
-            comparison = a.title.localeCompare(b.title);
-        } else {
-            comparison = a.id - b.id; 
-        }
 
-        return sortDirection === "asc" ? comparison : -comparison;
-    });
+    // Filtered and Sorted Tasks
+    const filteredTasks = tasks
+        .filter((task) => {
+            // Filter by priority
+            if (filterPriority && task.priority !== filterPriority) return false;
+            // Filter by completion status
+            if (filterStatus === "completed" && !task.completed) return false;
+            if (filterStatus === "notCompleted" && task.completed) return false;
+            return true;
+        })
+        .sort((a, b) => {
+            let comparison = 0;
+            if (sortCriteria === "priority") {
+                const priorityOrder = { "P1": 1, "P2": 2, "P3": 3, "P4": 4, "": 5 };
+                comparison = priorityOrder[a.priority] - priorityOrder[b.priority];
+            } else if (sortCriteria === "deadline") {
+                comparison = new Date(a.deadline || 0) - new Date(b.deadline || 0);
+            } else if (sortCriteria === "title") {
+                comparison = a.title.localeCompare(b.title);
+            } else {
+                comparison = a.id - b.id; 
+            }
+
+            return sortDirection === "asc" ? comparison : -comparison;
+        });
 
     const addTask = (newTask) => {
         setTasks([...tasks, newTask]);
@@ -119,6 +129,36 @@ const Home = ({ onLogout }) => {
             </button>
             {/* Tasks Container */}
             <div className="relative bg-gray-100 p-4 rounded-lg shadow-md min-h-[80vh] overflow-y-auto overflow-x-hidden">
+                {/* Filter Options */}
+                <div className="flex space-x-4 mb-4">
+                    <div>
+                        <label className="text-gray-700 font-semibold mr-2">Priority:</label>
+                        <select
+                            value={filterPriority}
+                            onChange={(e) => setFilterPriority(e.target.value)}
+                            className="p-2 border rounded"
+                        >
+                            <option value="">All</option>
+                            <option value="P1">P1</option>
+                            <option value="P2">P2</option>
+                            <option value="P3">P3</option>
+                            <option value="P4">P4</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="text-gray-700 font-semibold mr-2">Status:</label>
+                        <select
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                            className="p-2 border rounded"
+                        >
+                            <option value="">All</option>
+                            <option value="completed">Completed</option>
+                            <option value="notCompleted">Not Completed</option>
+                        </select>
+                    </div>
+                </div>
                 {/* Sorting Options */}
                 <div className="mb-4 flex items-center gap-5">
                     <div>
@@ -147,7 +187,7 @@ const Home = ({ onLogout }) => {
                     </div>
                 </div>
                 <div className="space-y-4">
-                    {sortedTasks.map((task) => (
+                    {filteredTasks.map((task) => (
                         <div key={task.id} className={`bg-white p-4 rounded-lg shadow flex justify-between items-center ${task.completed ? "opacity-50" : ""}`}>
                             <div>
                                 <span className={`font-semibold ${task.completed ? "line-through text-gray-500" : ""}`}>{task.title}</span>
