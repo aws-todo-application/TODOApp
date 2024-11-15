@@ -6,6 +6,7 @@ const CreateTaskForm = ({ onAddTask, onEditTask, taskToEdit, onCancel }) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [priority, setPriority] = useState("");
+    const [deadline, setDeadline] = useState("");
 
     const userSession = JSON.parse(localStorage.getItem("userSession"));
 
@@ -14,10 +15,12 @@ const CreateTaskForm = ({ onAddTask, onEditTask, taskToEdit, onCancel }) => {
             setTitle(taskToEdit.title);
             setDescription(taskToEdit.description);
             setPriority(taskToEdit.priority);
+            setDeadline(taskToEdit.deadline);
         } else {
             setTitle("");
             setDescription("");
             setPriority("");
+            setDeadline("");
         }
     }, [taskToEdit]);
 
@@ -25,7 +28,7 @@ const CreateTaskForm = ({ onAddTask, onEditTask, taskToEdit, onCancel }) => {
         e.preventDefault();
         if(title) {
             const user_id = userSession.idToken.payload.sub;
-            const newTask = { title, description, priority, user_id };
+            const newTask = { title, description, priority, deadline: deadline || null, user_id };
 
             if (taskToEdit) {
                 onEditTask({ ...taskToEdit, ...newTask });
@@ -85,6 +88,16 @@ const CreateTaskForm = ({ onAddTask, onEditTask, taskToEdit, onCancel }) => {
                         <option value="P3">P3</option>
                         <option value="P4">P4 - Lowest</option>
                     </select>
+                </label>
+
+                <label className="block mb-4">
+                    <span className="text-gray-700">Deadline</span>
+                    <input
+                        type="date"
+                        value={deadline}
+                        onChange={(e) => setDeadline(e.target.value)}
+                        className="block w-full mt-1 p-2 border rounded"
+                    />
                 </label>
 
                 <div className="flex justify-end space-x-2">
