@@ -19,7 +19,7 @@ const Home = ({ onLogout }) => {
     const [filterStatus, setFilterStatus] = useState("");
 
     const userSession = JSON.parse(localStorage.getItem("userSession"));
-
+    
 
     useEffect(() => {
         const fetchTasks = async () => {
@@ -34,7 +34,7 @@ const Home = ({ onLogout }) => {
         };
 
         fetchTasks();
-    }, []);
+    }, []); // eslint-disable-line
 
     const getPriorityClass = (priority) => {
         switch (priority) {
@@ -191,7 +191,7 @@ const Home = ({ onLogout }) => {
                         <div key={task.id} className={`bg-white p-4 rounded-lg shadow flex justify-between items-center ${task.completed ? "opacity-50" : ""}`}>
                             <div>
                                 <span className={`font-semibold ${task.completed ? "line-through text-gray-500" : ""}`}>{task.title}</span>
-                                <img src={`${getPriorityClass(task.priority)}`} className="inline-block w-4 h-4 ml-2"/>
+                                <img alt={`flag ${task.priority}`} src={`${getPriorityClass(task.priority)}`} className="inline-block w-4 h-4 ml-2"/>
                                 {!task.completed && <>
                                 <br />
                                 <span className={`${task.completed ? "line-through text-gray-400" : "text-gray-500"}`}>{task.description}</span>
