@@ -58,66 +58,68 @@ const Register = () => {
     };
 
     return (
-        <div className="bg-gray-100 p-6 rounded-lg shadow-md max-w-md mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Register</h2>
-            {!isConfirming ? (
-                <>
-                <form onSubmit={handleRegister} className="space-y-4">
-                    <div>
-                        <label className="block text-gray-700">Email</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full p-2 border rounded"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-gray-700">Password</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full p-2 border rounded"
-                            required
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-                    >
-                        Register
-                    </button>
-                </form>
-                <p className="text-center mt-4">
-                    Already have an account?{" "}
-                    <Link to="/login" className="text-blue-500 underline">
-                        Login here
-                    </Link>
-                </p>
-                </>
-            ) : (
-                <form onSubmit={handleConfirm} className="space-y-4">
-                    <div>
-                        <label className="block text-gray-700">Confirmation Code</label>
-                        <input
-                            type="text"
-                            value={confirmationCode}
-                            onChange={(e) => setConfirmationCode(e.target.value)}
-                            className="w-full p-2 border rounded"
-                            required
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
-                    >
-                        Confirm Account
-                    </button>
-                </form>
-            )}
-        </div>
+        <div className="flex items-center justify-center h-full">
+            <div className="bg-gray-100 p-6 rounded-lg shadow-md max-w-md mx-auto min-w-[28rem]">
+                <h2 className="text-2xl font-bold mb-4">Register</h2>
+                {!isConfirming ? (
+                    <>
+                    <form onSubmit={handleRegister} className="space-y-4">
+                        <div>
+                            <label className="block text-gray-700">Email</label>
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full p-2 border rounded"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700">Password</label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full p-2 border rounded"
+                                required
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                        >
+                            Register
+                        </button>
+                    </form>
+                    <p className="text-center mt-4">
+                        Already have an account?{" "}
+                        <Link to="/login" className="text-blue-500 underline">
+                            Login here
+                        </Link>
+                    </p>
+                    </>
+                ) : (
+                    <form onSubmit={handleConfirm} className="space-y-4">
+                        <div>
+                            <label className="block text-gray-700">Confirmation Code</label>
+                            <input
+                                type="text"
+                                value={confirmationCode}
+                                onChange={(e) => setConfirmationCode(e.target.value)}
+                                className="w-full p-2 border rounded"
+                                required
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
+                        >
+                            Confirm Account
+                        </button>
+                    </form>
+                )}
+            </div>
+        </div>  
     );
 };
 

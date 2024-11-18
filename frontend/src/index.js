@@ -9,3 +9,6 @@ ReactDOM.render(
     </React.StrictMode>,
     document.getElementById("root")
 );
+
+document.getElementById("root").style.height = "100vh";
+document.getElementById("root").style.width = "100vw";
